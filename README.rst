@@ -89,7 +89,7 @@ Release Notes
 
 **v0.3.0**
 
-* Added support for Keycloak > 4.0
+* Added support for Keycloak > 17.0
 * Bug fix: remove `auth/` from the urls as it is no longer there
 
 **v0.2.3**
