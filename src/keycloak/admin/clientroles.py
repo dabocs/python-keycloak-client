@@ -4,31 +4,33 @@ from collections import OrderedDict
 from keycloak.admin import KeycloakAdminBase
 
 ROLE_KWARGS = [
-    'description',
-    'id',
-    'client_role',
-    'composite',
-    'composites',
-    'container_id',
-    'scope_param_required'
+    "description",
+    "id",
+    "client_role",
+    "composite",
+    "composites",
+    "container_id",
+    "scope_param_required",
 ]
 
-__all__ = ('to_camel_case', 'ClientRole', 'ClientRoles',)
+__all__ = (
+    "to_camel_case",
+    "ClientRole",
+    "ClientRoles",
+)
 
 
 def to_camel_case(snake_cased_str):
-    components = snake_cased_str.split('_')
+    components = snake_cased_str.split("_")
     # We capitalize the first letter of each component except the first one
     # with the 'title' method and join them together.
-    return components[0] + ''.join(map(str.capitalize, components[1:]))
+    return components[0] + "".join(map(str.capitalize, components[1:]))
 
 
 class ClientRoles(KeycloakAdminBase):
     _client_id = None
     _realm_name = None
-    _paths = {
-        'collection': '/admin/realms/{realm}/clients/{id}/roles'
-    }
+    _paths = {"collection": "/admin/realms/{realm}/clients/{id}/roles"}
 
     def __init__(self, realm_name, client_id, *args, **kwargs):
         self._client_id = client_id
@@ -36,9 +38,12 @@ class ClientRoles(KeycloakAdminBase):
         super(ClientRoles, self).__init__(*args, **kwargs)
 
     def by_name(self, role_name):
-        return ClientRole(realm_name=self._realm_name,
-                          client_id=self._client_id,
-                          role_name=role_name, client=self._client)
+        return ClientRole(
+            realm_name=self._realm_name,
+            client_id=self._client_id,
+            role_name=role_name,
+            client=self._client,
+        )
 
     def create(self, name, **kwargs):
         """
@@ -64,18 +69,14 @@ class ClientRoles(KeycloakAdminBase):
 
         return self._client.post(
             url=self._client.get_full_url(
-                self.get_path('collection',
-                              realm=self._realm_name,
-                              id=self._client_id)
+                self.get_path("collection", realm=self._realm_name, id=self._client_id)
             ),
-            data=json.dumps(payload, sort_keys=True)
+            data=json.dumps(payload, sort_keys=True),
         )
 
 
 class ClientRole(KeycloakAdminBase):
-    _paths = {
-        'single': '/admin/realms/{realm}/clients/{id}/roles/{role_name}'
-    }
+    _paths = {"single": "/admin/realms/{realm}/clients/{id}/roles/{role_name}"}
 
     def __init__(self, realm_name, client_id, role_name, *args, **kwargs):
         self._client_id = client_id
@@ -107,10 +108,12 @@ class ClientRole(KeycloakAdminBase):
 
         return self._client.put(
             url=self._client.get_full_url(
-                self.get_path('single',
-                              realm=self._realm_name,
-                              id=self._client_id,
-                              role_name=self._role_name)
+                self.get_path(
+                    "single",
+                    realm=self._realm_name,
+                    id=self._client_id,
+                    role_name=self._role_name,
+                )
             ),
-            data=json.dumps(payload, sort_keys=True)
+            data=json.dumps(payload, sort_keys=True),
         )

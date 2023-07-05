@@ -1,13 +1,14 @@
 from keycloak.admin import KeycloakAdminBase
 
-__all__ = ('Client', 'Clients',)
+__all__ = (
+    "Client",
+    "Clients",
+)
 
 
 class Clients(KeycloakAdminBase):
     _realm_name = None
-    _paths = {
-        'collection': '/admin/realms/{realm}/clients'
-    }
+    _paths = {"collection": "/admin/realms/{realm}/clients"}
 
     def __init__(self, realm_name, *args, **kwargs):
         self._realm_name = realm_name
@@ -16,7 +17,7 @@ class Clients(KeycloakAdminBase):
     def all(self):
         return self._client.get(
             self._client.get_full_url(
-                self.get_path('collection', realm=self._realm_name)
+                self.get_path("collection", realm=self._realm_name)
             )
         )
 
@@ -36,5 +37,7 @@ class Client(KeycloakAdminBase):
     @property
     def roles(self):
         from keycloak.admin.clientroles import ClientRoles
-        return ClientRoles(client=self._client, client_id=self._id,
-                           realm_name=self._realm_name)
+
+        return ClientRoles(
+            client=self._client, client_id=self._id, realm_name=self._realm_name
+        )

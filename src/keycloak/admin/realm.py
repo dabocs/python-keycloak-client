@@ -1,10 +1,12 @@
 from keycloak.admin import KeycloakAdminBase
 
-__all__ = ('Realm', 'Realms',)
+__all__ = (
+    "Realm",
+    "Realms",
+)
 
 
 class Realms(KeycloakAdminBase):
-
     def by_name(self, name):
         return Realm(name=name, client=self._client)
 
@@ -19,14 +21,17 @@ class Realm(KeycloakAdminBase):
     @property
     def clients(self):
         from keycloak.admin.clients import Clients
+
         return Clients(realm_name=self._name, client=self._client)
 
     @property
     def users(self):
         from keycloak.admin.users import Users
+
         return Users(realm_name=self._name, client=self._client)
 
     @property
     def groups(self):
         from keycloak.admin.groups import Groups
+
         return Groups(realm_name=self._name, client=self._client)

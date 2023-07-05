@@ -5,7 +5,6 @@ except ImportError:
 
 
 class KeycloakWellKnown(Mapping):
-
     _contents = None
     _realm = None
     _path = None

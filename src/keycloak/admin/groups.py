@@ -2,12 +2,12 @@ import json
 
 from keycloak.admin import KeycloakAdminBase
 
-__all__ = ('Groups',)
+__all__ = ("Groups",)
 
 
 class Groups(KeycloakAdminBase):
     _paths = {
-        'collection': '/admin/realms/{realm}/groups',
+        "collection": "/admin/realms/{realm}/groups",
     }
 
     def __init__(self, realm_name, *args, **kwargs):
@@ -17,22 +17,14 @@ class Groups(KeycloakAdminBase):
     def all(self):
         return self._client.get(
             url=self._client.get_full_url(
-                self.get_path(
-                    'collection',
-                    realm=self._realm_name
-                )
+                self.get_path("collection", realm=self._realm_name)
             ),
         )
 
     def create(self, name):
         return self._client.post(
             url=self._client.get_full_url(
-                self.get_path(
-                    'collection',
-                    realm=self._realm_name
-                )
+                self.get_path("collection", realm=self._realm_name)
             ),
-            data=json.dumps({
-                "name": name
-            })
+            data=json.dumps({"name": name}),
         )

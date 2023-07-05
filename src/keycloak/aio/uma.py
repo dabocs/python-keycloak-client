@@ -1,9 +1,8 @@
 from keycloak.aio.mixins import WellKnownMixin
-from keycloak.uma import KeycloakUMA as SyncKeycloakUMA, PATH_WELL_KNOWN
+from keycloak.uma import PATH_WELL_KNOWN
+from keycloak.uma import KeycloakUMA as SyncKeycloakUMA
 
-__all__ = (
-    'KeycloakUMA',
-)
+__all__ = ("KeycloakUMA",)
 
 
 class KeycloakUMA(WellKnownMixin, SyncKeycloakUMA):
