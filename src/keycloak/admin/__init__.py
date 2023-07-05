@@ -1,6 +1,6 @@
 __all__ = (
-    'KeycloakAdmin',
-    'KeycloakAdminBase',
+    "KeycloakAdmin",
+    "KeycloakAdminBase",
 )
 
 
@@ -23,9 +23,7 @@ class KeycloakAdminBase(object):
 
 class KeycloakAdmin(object):
     _realm = None
-    _paths = {
-        'root': '/'
-    }
+    _paths = {"root": "/"}
     _token = None
 
     def __init__(self, realm):
@@ -35,9 +33,7 @@ class KeycloakAdmin(object):
         self._realm = realm
 
     def root(self):
-        return self.get(
-            self.get_full_url(self._paths['root'])
-        )
+        return self.get(self.get_full_url(self._paths["root"]))
 
     def get_full_url(self, *args, **kwargs):
         return self._realm.client.get_full_url(*args, **kwargs)
@@ -56,6 +52,7 @@ class KeycloakAdmin(object):
     @property
     def realms(self):
         from keycloak.admin.realm import Realms
+
         return Realms(client=self)
 
     def post(self, url, data, headers=None, **kwargs):
@@ -85,6 +82,6 @@ class KeycloakAdmin(object):
             token = self._token
 
         headers = headers or {}
-        headers['Authorization'] = "Bearer {}".format(token)
-        headers['Content-Type'] = 'application/json'
+        headers["Authorization"] = "Bearer {}".format(token)
+        headers["Content-Type"] = "application/json"
         return headers

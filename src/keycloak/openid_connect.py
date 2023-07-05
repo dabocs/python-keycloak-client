@@ -11,7 +11,6 @@ PATH_WELL_KNOWN = "realms/{}/.well-known/openid-configuration"
 
 
 class KeycloakOpenidConnect(WellKnownMixin):
-
     _well_known = None
     _client_id = None
     _client_secret = None
@@ -91,9 +90,11 @@ class KeycloakOpenidConnect(WellKnownMixin):
             way.
         """
         return jwt.decode(
-            token, key,
-            audience=kwargs.pop('audience', None) or self._client_id,
-            algorithms=algorithms or ['RS256'], **kwargs
+            token,
+            key,
+            audience=kwargs.pop("audience", None) or self._client_id,
+            algorithms=algorithms or ["RS256"],
+            **kwargs,
         )
 
     def logout(self, refresh_token):
@@ -102,12 +103,14 @@ class KeycloakOpenidConnect(WellKnownMixin):
 
         :param str refresh_token:
         """
-        return self._realm.client.post(self.get_url('end_session_endpoint'),
-                                       data={
-                                           'refresh_token': refresh_token,
-                                           'client_id': self._client_id,
-                                           'client_secret': self._client_secret
-                                       })
+        return self._realm.client.post(
+            self.get_url("end_session_endpoint"),
+            data={
+                "refresh_token": refresh_token,
+                "client_id": self._client_id,
+                "client_secret": self._client_secret,
+            },
+        )
 
     def certs(self):
         """
@@ -119,7 +122,7 @@ class KeycloakOpenidConnect(WellKnownMixin):
 
         :rtype: dict
         """
-        return self._realm.client.get(self.get_url('jwks_uri'))
+        return self._realm.client.get(self.get_url("jwks_uri"))
 
     def userinfo(self, token):
         """
@@ -135,13 +138,11 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :param str token:
         :rtype: dict
         """
-        url = self.well_known['userinfo_endpoint']
+        url = self.well_known["userinfo_endpoint"]
 
-        return self._realm.client.get(url, headers={
-                                          "Authorization": "Bearer {}".format(
-                                              token
-                                          )
-                                      })
+        return self._realm.client.get(
+            url, headers={"Authorization": "Bearer {}".format(token)}
+        )
 
     def uma_ticket(self, token, **kwargs):
         """
@@ -155,7 +156,7 @@ class KeycloakOpenidConnect(WellKnownMixin):
         return self._realm.client.post(
             self.get_url("token_endpoint"),
             payload,
-            headers={"Authorization": "Bearer {}".format(token)}
+            headers={"Authorization": "Bearer {}".format(token)},
         )
 
     def authorization_url(self, **kwargs):
@@ -172,16 +173,16 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :return: URL to redirect the resource owner to
         :rtype: str
         """
-        payload = {'response_type': 'code', 'client_id': self._client_id}
+        payload = {"response_type": "code", "client_id": self._client_id}
 
         for key in kwargs.keys():
             # Add items in a sorted way for unittest purposes.
             payload[key] = kwargs[key]
         payload = sorted(payload.items(), key=lambda val: val[0])
         params = urlencode(payload)
-        url = self.get_url('authorization_endpoint')
+        url = self.get_url("authorization_endpoint")
 
-        return '{}?{}'.format(url, params)
+        return "{}?{}".format(url, params)
 
     def authorization_code(self, code, redirect_uri):
         """
@@ -196,8 +197,9 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :rtype: dict
         :return: Access token response
         """
-        return self._token_request(grant_type='authorization_code', code=code,
-                                   redirect_uri=redirect_uri)
+        return self._token_request(
+            grant_type="authorization_code", code=code, redirect_uri=redirect_uri
+        )
 
     def password_credentials(self, username, password, **kwargs):
         """
@@ -210,9 +212,9 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :rtype: dict
         :return: Access token response
         """
-        return self._token_request(grant_type='password',
-                                   username=username, password=password,
-                                   **kwargs)
+        return self._token_request(
+            grant_type="password", username=username, password=password, **kwargs
+        )
 
     def client_credentials(self, **kwargs):
         """
@@ -224,7 +226,7 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :rtype: dict
         :return: Access token response
         """
-        return self._token_request(grant_type='client_credentials', **kwargs)
+        return self._token_request(grant_type="client_credentials", **kwargs)
 
     def refresh_token(self, refresh_token, **kwargs):
         """
@@ -237,8 +239,9 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :rtype: dict
         :return: Access token response
         """
-        return self._token_request(grant_type='refresh_token',
-                                   refresh_token=refresh_token, **kwargs)
+        return self._token_request(
+            grant_type="refresh_token", refresh_token=refresh_token, **kwargs
+        )
 
     def token_exchange(self, **kwargs):
         """
@@ -284,8 +287,7 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :return: access_token, refresh_token and expires_in
         """
         return self._token_request(
-            grant_type='urn:ietf:params:oauth:grant-type:token-exchange',
-            **kwargs
+            grant_type="urn:ietf:params:oauth:grant-type:token-exchange", **kwargs
         )
 
     def _token_request(self, grant_type, **kwargs):
@@ -297,12 +299,11 @@ class KeycloakOpenidConnect(WellKnownMixin):
         :return:
         """
         payload = {
-            'grant_type': grant_type,
-            'client_id': self._client_id,
-            'client_secret': self._client_secret
+            "grant_type": grant_type,
+            "client_id": self._client_id,
+            "client_secret": self._client_secret,
         }
 
         payload.update(**kwargs)
 
-        return self._realm.client.post(self.get_url('token_endpoint'),
-                                       data=payload)
+        return self._realm.client.post(self.get_url("token_endpoint"), data=payload)
